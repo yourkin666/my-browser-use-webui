@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+from typing import Optional, List
 
 # from lmnr.sdk.decorators import observe
 from browser_use.agent.gif import create_history_gif
@@ -28,6 +29,37 @@ SKIP_LLM_API_KEY_VERIFICATION = (
 
 
 class BrowserUseAgent(Agent):
+    def __init__(self, *args, **kwargs):
+        # Dynamically scan for image files in downloads directory
+        file_paths = []
+        downloads_dir = os.path.abspath("./tmp/downloads")
+        
+        if os.path.exists(downloads_dir):
+            logger.info(f"Scanning for image files in: {downloads_dir}")
+            for file in os.listdir(downloads_dir):
+                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.svg', '.tiff', '.tif')):
+                    file_path = os.path.join(downloads_dir, file)
+                    file_paths.append(file_path)
+                    logger.info(f"Found image file: {file}")
+        else:
+            logger.warning(f"Downloads directory not found: {downloads_dir}")
+            os.makedirs(downloads_dir, exist_ok=True)
+            logger.info(f"Created downloads directory: {downloads_dir}")
+        
+        # Set available_file_paths parameter
+        kwargs['available_file_paths'] = file_paths
+        
+        # Call parent constructor
+        super().__init__(*args, **kwargs)
+        
+        logger.info(f"BrowserUseAgent initialized with {len(file_paths)} available image files:")
+        for path in file_paths:
+            file_size = os.path.getsize(path) / (1024 * 1024)  # Size in MB
+            logger.info(f"  ✅ {os.path.basename(path)} ({file_size:.1f}MB)")
+        
+        if not file_paths:
+            logger.warning("⚠️ No image files found in downloads directory. You may need to place image files there before uploading.")
+
     def _set_tool_calling_method(self) -> ToolCallingMethod | None:
         tool_calling_method = self.settings.tool_calling_method
         if tool_calling_method == 'auto':

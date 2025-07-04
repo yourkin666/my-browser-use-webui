@@ -322,17 +322,17 @@ def get_llm_model(provider: str, **kwargs):
         )
     elif provider == "siliconflow":
         if not kwargs.get("api_key", ""):
-            api_key = os.getenv("SiliconFLOW_API_KEY", "")
+            api_key = os.getenv("SILICONFLOW_API_KEY", "")
         else:
             api_key = kwargs.get("api_key")
         if not kwargs.get("base_url", ""):
-            base_url = os.getenv("SiliconFLOW_ENDPOINT", "")
+            base_url = os.getenv("SILICONFLOW_ENDPOINT", "")
         else:
             base_url = kwargs.get("base_url")
         return ChatOpenAI(
             api_key=api_key,
             base_url=base_url,
-            model_name=kwargs.get("model_name", "Qwen/QwQ-32B"),
+            model_name=kwargs.get("model_name", "deepseek-ai/DeepSeek-R1"),
             temperature=kwargs.get("temperature", 0.0),
         )
     elif provider == "modelscope":
