@@ -9,6 +9,7 @@ PROVIDER_DISPLAY_NAMES = {
     "unbound": "Unbound AI",
     "ibm": "IBM",
     "grok": "Grok",
+    "siliconflow": "SiliconFlow",
 }
 
 # Predefined model names for common providers
