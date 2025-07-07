@@ -9,9 +9,6 @@ services:
         TARGETPLATFORM: ${TARGETPLATFORM:-linux/amd64}
     ports:
       - "7788:7788"
-      - "6080:6080"
-      - "5901:5901"
-      - "9222:9222"
     environment:
       # LLM API Keys & Endpoints
       - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://api.openai.com/v1}
@@ -33,11 +30,15 @@ services:
       - MOONSHOT_API_KEY=${MOONSHOT_API_KEY:-}
       - UNBOUND_ENDPOINT=${UNBOUND_ENDPOINT:-https://api.getunbound.ai}
       - UNBOUND_API_KEY=${UNBOUND_API_KEY:-}
-      - SiliconFLOW_ENDPOINT=${SiliconFLOW_ENDPOINT:-https://api.siliconflow.cn/v1/}
-      - SiliconFLOW_API_KEY=${SiliconFLOW_API_KEY:-}
+      - SILICONFLOW_ENDPOINT=${SILICONFLOW_ENDPOINT:-https://api.siliconflow.cn/v1/}
+      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY:-}
       - IBM_ENDPOINT=${IBM_ENDPOINT:-https://us-south.ml.cloud.ibm.com}
       - IBM_API_KEY=${IBM_API_KEY:-}
       - IBM_PROJECT_ID=${IBM_PROJECT_ID:-}
+      - GROK_ENDPOINT=${GROK_ENDPOINT:-https://api.x.ai/v1}
+      - GROK_API_KEY=${GROK_API_KEY:-}
+      - MODELSCOPE_ENDPOINT=${MODELSCOPE_ENDPOINT:-https://dashscope.aliyuncs.com/compatible-mode/v1}
+      - MODELSCOPE_API_KEY=${MODELSCOPE_API_KEY:-}
 
       # Application Settings
       - ANONYMIZED_TELEMETRY=${ANONYMIZED_TELEMETRY:-false}
@@ -46,35 +47,24 @@ services:
       # Browser Settings
       - BROWSER_PATH=
       - BROWSER_USER_DATA=
-      - BROWSER_DEBUGGING_PORT=${BROWSER_DEBUGGING_PORT:-9222}
-      - BROWSER_DEBUGGING_HOST=localhost
       - USE_OWN_BROWSER=false
       - KEEP_BROWSER_OPEN=true
-      - BROWSER_CDP=${BROWSER_CDP:-} # e.g., http://localhost:9222
 
       # Display Settings
       - DISPLAY=:99
       # This ENV is used by the Dockerfile during build time if playwright respects it.
       # It's not strictly needed at runtime by docker-compose unless your app or scripts also read it.
       - PLAYWRIGHT_BROWSERS_PATH=/ms-browsers # Matches Dockerfile ENV
-      - RESOLUTION=${RESOLUTION:-1920x1080x24}
-      - RESOLUTION_WIDTH=${RESOLUTION_WIDTH:-1920}
-      - RESOLUTION_HEIGHT=${RESOLUTION_HEIGHT:-1080}
-
-      # VNC Settings
-      - VNC_PASSWORD=${VNC_PASSWORD:-youvncpassword}
 
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      # - ./my_chrome_data:/app/data/chrome_data # Optional: persist browser data
+      - ./tmp:/app/tmp
+      - ./data:/app/data
     restart: unless-stopped
     shm_size: '2gb'
     cap_add:
       - SYS_ADMIN
-    tmpfs:
-      - /tmp
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "5901"] # VNC port
-      interval: 10s
-      timeout: 5s
+      test: ["CMD", "curl", "-f", "http://localhost:7788"] 
+      interval: 30s
+      timeout: 10s
       retries: 3
