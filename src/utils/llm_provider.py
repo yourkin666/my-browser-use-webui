@@ -322,11 +322,11 @@ def get_llm_model(provider: str, **kwargs):
         )
     elif provider == "siliconflow":
         if not kwargs.get("api_key", ""):
-            api_key = os.getenv("SILICONFLOW_API_KEY", "")
+            api_key = os.getenv("SILICONFLOW_API_KEY", "") or os.getenv("SiliconFLOW_API_KEY", "")
         else:
             api_key = kwargs.get("api_key")
         if not kwargs.get("base_url", ""):
-            base_url = os.getenv("SILICONFLOW_ENDPOINT", "")
+            base_url = os.getenv("SILICONFLOW_ENDPOINT", "") or os.getenv("SiliconFLOW_ENDPOINT", "")
         else:
             base_url = kwargs.get("base_url")
         return ChatOpenAI(
