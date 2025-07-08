@@ -5,6 +5,7 @@ from src.webui.components.agent_settings_tab import create_agent_settings_tab
 from src.webui.components.browser_settings_tab import create_browser_settings_tab
 from src.webui.components.browser_use_agent_tab import create_browser_use_agent_tab
 from src.webui.components.deep_research_agent_tab import create_deep_research_agent_tab
+from src.webui.components.xiaohongshu_agent_tab import create_xiaohongshu_agent_tab
 from src.webui.components.load_save_config_tab import create_load_save_config_tab
 
 theme_map = {
@@ -88,6 +89,9 @@ def create_ui(theme_name="Ocean"):
                 with gr.Tabs():
                     with gr.TabItem("Deep Research"):
                         create_deep_research_agent_tab(ui_manager)
+                    
+                    with gr.TabItem("小红书发帖"):
+                        create_xiaohongshu_agent_tab(ui_manager)
 
             with gr.TabItem("📁 Load & Save Config"):
                 create_load_save_config_tab(ui_manager)
